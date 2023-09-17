@@ -5,7 +5,7 @@ from pathlib import Path
 import requests
 
 # Grab all cuda code
-git_url = "https://raw.githubusercontent.com/theeldermillenial/cuda-fortuna/master/"
+git_url = "https://raw.githubusercontent.com/theeldermillenial/nunet-cuda-tuna/master/"
 files = [
     "gpu_miner"
 ]

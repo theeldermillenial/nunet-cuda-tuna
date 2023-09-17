@@ -19,8 +19,8 @@ for file in files:
 # subprocess.run(["gcc", "-O3", "-v", "-c", "-o", "utils.o", "utils.c", "-lrt"])
 # subprocess.run(["nvcc", "-O3", "-v", "-lrt", "-lm", "-o", "gpu_miner", "main.cu", "utils.o", "sha256.o"])
 
-# path = Path("gpu.log")
-# fw = open(path, "w")
+path = Path("gpu.log")
+fw = open(path, "w")
 process = subprocess.Popen(["./gpu_miner"], stdout=fw)
 
 while True:

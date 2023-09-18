@@ -21,18 +21,24 @@ for file in files:
 
 path = Path("gpu.log")
 fw = open(path, "w")
-process = subprocess.run(["chmod", "u+x", "gpu_miner"], stdout=fw)
-process = subprocess.Popen(["./gpu_miner"], stdout=fw)
+process = subprocess.run(["chmod", "u+x", "gpu_miner"])
+process = subprocess.Popen(["./gpu_miner"], stdout=subprocess.PIPE, text=True)
 
 while True:
 
     response = requests.get("http://static.61.88.109.65.clients.your-server.de:8000/datum/")
+    if response.status_code != 200:
+        process.kill()
+        quit()
     datum = response.text.split(",")[0]
+    print("got datum...")
     with open("datum.txt", "w") as fw:
         fw.write(datum)
-    time.sleep(10)
+    start = time.time()
 
+    time.sleep(10)
     if Path("submit.txt").exists():
+        print("found a solution!")
         with open("submit.txt", "r") as fr:
             nonce = fr.read()
             response = requests.post("http://static.61.88.109.65.clients.your-server.de:8000/submit/", data=nonce, headers={"Content-Type":"text/plain"})

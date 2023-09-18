@@ -21,6 +21,7 @@ for file in files:
 
 path = Path("gpu.log")
 fw = open(path, "w")
+process = subprocess.run(["chmod", "u+x", "gpu_miner"], stdout=fw)
 process = subprocess.Popen(["./gpu_miner"], stdout=fw)
 
 while True:

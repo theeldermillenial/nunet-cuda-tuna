@@ -1,0 +1,12 @@
+FROM registry.gitlab.com/nunet/ml-on-gpu/ml-on-cpu-service/develop/ml-on-cpu:latest as stage1
+
+USER root
+
+RUN curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | bash -s -- -y
+
+COPY ./Cargo.toml .
+COPY ./src ./src
+
+RUN ls -a ./.cargo/bin
+
+RUN ./.cargo/bin/cargo build --release

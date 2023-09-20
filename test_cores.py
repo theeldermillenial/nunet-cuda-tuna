@@ -15,4 +15,4 @@ except:
     # the total number of cpus
     num_threads = multiprocessing.cpu_count()
 
-print(num_threads)
+print(f"Number of cores detected: {num_threads}")

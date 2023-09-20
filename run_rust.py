@@ -84,12 +84,15 @@ while True:
             fw.write(datum)
     start = time.time()
     nonces = []
-    while time.time() - start < 30:
+    while time.time() - start < 10:
         if Path("submit.txt").exists():
             with open("submit.txt", "r") as fr:
                 for line in fr:
                     nonces.append(line.rstrip("\n"))
                 Path("submit.txt").unlink()
+    if process.poll() is not None:
+        print(f"Job inactive with error code {process.poll()}...restarting...")
+        process = subprocess.Popen(["./rminer"], stdout=subprocess.PIPE, text=True)
     if len(nonces) > 0:
         print(f"Found {len(nonces)} nonces: {nonces}")
 

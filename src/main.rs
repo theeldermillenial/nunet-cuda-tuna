@@ -157,6 +157,7 @@ pub fn main() {
             let should_terminate = Arc::clone(&should_terminate);
             let tx = tx.clone();
             let clone_hash = hash.clone();
+            println!("hash: {}", hash);
             let handle = thread::spawn(move || {
                 worker(clone_hash, difficulty, leading_zeros, should_terminate, tx);
             });

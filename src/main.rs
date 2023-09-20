@@ -118,6 +118,7 @@ pub fn worker(
 
 fn fetch_datum() -> (String, u16, u8) {
     let hash = fs::read_to_string("datum.txt").expect("Couldn't read the file.");
+    println!("data: {}", hash);
     return (hash, 65535, 8);
 }
 

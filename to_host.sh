@@ -1,1 +1,2 @@
 sudo docker run --mount type=bind,source=/home/theeldermillenial/fortuna-tely/nunet-cuda-tuna/,target=/data/ -it --gpus all --entrypoint /bin/bash build-miner
+sudo docker run --mount type=bind,source=/home/theeldermillenial/fortuna-tely/nunet-cuda-tuna/,target=/data/ -it --entrypoint /bin/bash build-rust-miner

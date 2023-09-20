@@ -1,0 +1,1 @@
+sudo docker build . --file Dockerfile.rust -t build-rust-miner

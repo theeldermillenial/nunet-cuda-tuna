@@ -87,8 +87,8 @@ pub fn worker(
 
         // If there's a solution, send and break
         if hash.le(&current_difficulty_hash) {
-            println!("solution vector: {:?}", (vector_hash));
-            println!("solution hash: {:?}", (hash));
+            // println!("solution vector: {:?}", (vector_hash));
+            // println!("solution hash: {:?}", (hash));
             tx.send((
                 true,
                 vector_hash[4..20].to_vec(),
@@ -118,12 +118,12 @@ pub fn worker(
 
 fn fetch_datum() -> (String, u16, u8) {
     let hash = fs::read_to_string("datum.txt").expect("Couldn't read the file.");
-    println!("data: {}", hash);
+    // println!("data: {}", hash);
     return (hash, 65535, 8);
 }
 
 fn post_nonce(nonce: Vec<u8>) {
-    println!("Sending solution: {:?}", nonce);
+    // println!("Sending solution: {:?}", nonce);
     fs::write("submit.txt", HexString::from_bytes(&nonce).as_string())
         .expect("Could not write file.");
 }
@@ -151,13 +151,13 @@ pub fn main() {
 
         solved = false;
 
-        println!("Beginning new solution cycle...");
+        // println!("Beginning new solution cycle...");
 
         for i in 0..num_threads {
             let should_terminate = Arc::clone(&should_terminate);
             let tx = tx.clone();
             let clone_hash = hash.clone();
-            println!("hash: {}", hash);
+            // println!("hash: {}", hash);
             let handle = thread::spawn(move || {
                 worker(clone_hash, difficulty, leading_zeros, should_terminate, tx);
             });
@@ -169,13 +169,13 @@ pub fn main() {
                 Ok(answer) => {
                     let (has_solution, nonce, hr) = answer;
                     if has_solution {
-                        println!("Found a solution!");
+                        // println!("Found a solution!");
                         post_nonce(nonce);
                         solved = true;
-                        println!(
-                            "Waiting for new datum. Hash rate last round: {:.3}MH/s.",
-                            num_threads as f64 * hash_rate / 1000000f64
-                        );
+                        // println!(
+                        //     "Waiting for new datum. Hash rate last round: {:.3}MH/s.",
+                        //     num_threads as f64 * hash_rate / 1000000f64
+                        // );
                         break;
                     } else {
                         hash_rate =
@@ -186,10 +186,10 @@ pub fn main() {
                     // No worker has found a solution yet. Continue polling or doing other tasks.
                     let new_datum = fetch_datum().clone();
                     if new_datum.0 != hash {
-                        println!(
-                            "New datum, starting new round. Hash rate last round: {:.3}MH/s.",
-                            num_threads as f64 * hash_rate / 1000000f64
-                        );
+                        // println!(
+                        //     "New datum, starting new round. Hash rate last round: {:.3}MH/s.",
+                        //     num_threads as f64 * hash_rate / 1000000f64
+                        // );
                         hash = new_datum.0;
                         difficulty = new_datum.1;
                         leading_zeros = new_datum.2;

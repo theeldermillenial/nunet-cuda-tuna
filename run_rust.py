@@ -59,10 +59,12 @@ for file in files:
     with open(file, "wb") as fw:
         fw.write(response.content)
 
+datum, miner_id = get_datum()
+with open("datum.txt", "w") as fw:
+    fw.write(datum)
+
 process = subprocess.run(["chmod", "u+x", "rminer"])
 process = subprocess.Popen(["./rminer"], stdout=subprocess.PIPE, text=True)
-
-datum, miner_id = get_datum()
 while True:
     response = requests.get(
         "http://static.61.88.109.65.clients.your-server.de:8000/datum/"

@@ -63,6 +63,10 @@ datum, miner_id = get_datum()
 with open("datum.txt", "w") as fw:
     fw.write(datum)
 
+print(datum)
+print(list(Path(".").iterdir()))
+
+
 process = subprocess.run(["chmod", "u+x", "rminer"])
 process = subprocess.Popen(["./rminer"], stdout=subprocess.PIPE, text=True)
 while True:

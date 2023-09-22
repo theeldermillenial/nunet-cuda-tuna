@@ -8,5 +8,8 @@ edition = "2021"
 [dependencies]
 rand = "0.8.5"
 sha2 = "0.10.6"
+reqwest = { version = "0.11.20", features = ["blocking", "json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 hex-string = "0.1.0"
 structopt = "0.3.26"

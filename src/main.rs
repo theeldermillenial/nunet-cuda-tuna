@@ -1,5 +1,6 @@
 use std::{
     fs,
+    path::Path,
     sync::{
         atomic::{AtomicBool, Ordering},
         mpsc, Arc,
@@ -117,8 +118,10 @@ pub fn worker(
 }
 
 fn fetch_datum() -> (String, u16, u8) {
+    while !Path::new("datum.txt").exists() {
+        thread::sleep(Duration::from_millis(100)); // Optional, to avoid busy-waiting
+    }
     let hash = fs::read_to_string("datum.txt").expect("Couldn't read the file.");
-    // println!("data: {}", hash);
     return (hash, 65535, 8);
 }
 
@@ -131,7 +134,6 @@ fn post_nonce(nonce: Vec<u8>) {
 pub fn main() {
     // setup threading and global variables
     let opt = Opt::from_args();
-    let mut solved = false;
     let num_threads = opt.threads;
     let mut hash_rate = 0f64;
     let (tx, rx) = mpsc::channel();
@@ -143,17 +145,8 @@ pub fn main() {
 
     loop {
         let mut handles = vec![];
-        let (hash_update, _, _) = fetch_datum().clone();
 
-        // if solved && hash_update == hash {
-        //     continue;
-        // }
-
-        solved = false;
-
-        // println!("Beginning new solution cycle...");
-
-        for i in 0..num_threads {
+        for _i in 0..num_threads {
             let should_terminate = Arc::clone(&should_terminate);
             let tx = tx.clone();
             let clone_hash = hash.clone();
@@ -171,7 +164,6 @@ pub fn main() {
                     if has_solution {
                         // println!("Found a solution!");
                         post_nonce(nonce);
-                        solved = true;
                         // println!(
                         //     "Waiting for new datum. Hash rate last round: {:.3}MH/s.",
                         //     num_threads as f64 * hash_rate / 1000000f64

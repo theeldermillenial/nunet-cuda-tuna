@@ -54,17 +54,14 @@ def get_datum():
 git_url = "https://raw.githubusercontent.com/theeldermillenial/nunet-cuda-tuna/master/"
 files = ["rminer"]
 
-for file in files:
-    response = requests.get(git_url + file)
-    with open(file, "wb") as fw:
-        fw.write(response.content)
+# for file in files:
+#     response = requests.get(git_url + file)
+#     with open(file, "wb") as fw:
+#         fw.write(response.content)
 
 datum, miner_id = get_datum()
 with open("datum.txt", "w") as fw:
     fw.write(datum)
-
-print(datum)
-print(list(Path(".").iterdir()))
 
 
 process = subprocess.run(["chmod", "u+x", "rminer"])

@@ -2,6 +2,8 @@ FROM registry.gitlab.com/nunet/ml-on-gpu/ml-on-cpu-service/develop/ml-on-cpu:lat
 
 USER root
 
+RUN apt-get update && apt-get install libssl-dev
+
 RUN curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | bash -s -- -y
 
 COPY ./Cargo.toml .

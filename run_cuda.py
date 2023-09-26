@@ -54,17 +54,18 @@ def get_datum():
 git_url = "https://raw.githubusercontent.com/theeldermillenial/nunet-cuda-tuna/master/"
 files = ["gpu_miner"]
 
-for file in files:
-    response = requests.get(git_url + file)
-    with open(file, "wb") as fw:
-        fw.write(response.content)
+# for file in files:
+#     response = requests.get(git_url + file)
+#     with open(file, "wb") as fw:
+#         fw.write(response.content)
 
-path = Path("gpu.log")
-fw = open(path, "w")
+# path = Path("gpu.log")
+# fw = open(path, "w")
 process = subprocess.run(["chmod", "u+x", "gpu_miner"])
-process = subprocess.Popen(["./gpu_miner"], stdout=subprocess.PIPE, text=True)
+process = subprocess.Popen(["./gpu_miner"])
 
 datum, miner_id = get_datum()
+none_count = 0
 while True:
     response = requests.get(
         "http://static.61.88.109.65.clients.your-server.de:8000/datum/"
@@ -86,7 +87,13 @@ while True:
                 for line in fr:
                     nonces.append(line.rstrip("\n"))
                 Path("submit.txt").unlink()
-    if len(nonces) > 0:
+    if len(nonces) == 0:
+        none_count += 1
+        if none_count > 6:
+            print("Restarting miner...")
+            process.kill()
+            process = subprocess.Popen(["./gpu_miner"])
+    else:
         print(f"Found {len(nonces)} nonces: {nonces}")
 
         response = requests.post(
@@ -105,7 +112,7 @@ while True:
         "https://piefayth.dev/pool/hashrate",
         params={
             "miner_id": miner_id,
-            "start_time": int((datetime.now() - timedelta(seconds=3600)).timestamp()),
+            "start_time": int((datetime.now() - timedelta(seconds=900)).timestamp()),
         },
     )
     print(f"Hash rate (hourly average): {response.text}")

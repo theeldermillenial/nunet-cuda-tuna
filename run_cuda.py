@@ -61,70 +61,79 @@ for file in files:
 
 # path = Path("gpu.log")
 # fw = open(path, "w")
-process = subprocess.run(["chmod", "u+x", "gpu_miner"])
-process = subprocess.Popen(["./gpu_miner"])
+try:
+    process = subprocess.run(["chmod", "u+x", "gpu_miner"])
+    process = subprocess.Popen(["./gpu_miner"])
 
-datum, miner_id = get_datum()
-none_count = 0
-while True:
-    response = requests.get(
-        "http://static.61.88.109.65.clients.your-server.de:8000/datum/"
-    )
-    if response.status_code != 200:
-        process.kill()
-        quit()
-    new_datum, miner_id = get_datum()
-    if new_datum != datum:
-        print("got new datum...")
-        datum = new_datum
-        with open("datum.txt", "w") as fw:
-            fw.write(datum)
-    start = time.time()
-    nonces = []
-    while time.time() - start < 10:
-        if Path("submit.txt").exists():
-            with open("submit.txt", "r") as fr:
-                for line in fr:
-                    nonces.append(line.rstrip("\n"))
-                Path("submit.txt").unlink()
-    if len(nonces) == 0:
-        none_count += 1
-        if none_count > 6:
-            print("Restarting miner...")
-            process.kill()
-            process = subprocess.Popen(["./gpu_miner"])
-    else:
-        print(f"Found {len(nonces)} nonces: {nonces}")
-
-        response = requests.post(
-            "https://piefayth.dev/pool/submit",
-            headers={"Content-type": "application/json"},
-            data=json.dumps(
-                {
-                    "address": "addr1q9zs05ya2wqv2ftzqgckcmfg0xq7s9cnp99eyj2dcqaxyx96h2p5jcgwnv4tw5tq3yzd2dmh3sgcgfyta3tv8x3vdq8qvuzr64",
-                    "entries": [{"nonce": nonce} for nonce in nonces],
-                }
-            ),
+    datum, miner_id = get_datum()
+    none_count = 0
+    while True:
+        response = requests.get(
+            "http://static.61.88.109.65.clients.your-server.de:8000/datum/"
         )
-        print(f"Successfully submitted {response.json()['num_accepted']} responses!")
+        if response.status_code != 200:
+            process.kill()
+            quit()
+        new_datum, miner_id = get_datum()
+        if new_datum != datum:
+            print("got new datum...")
+            datum = new_datum
+            with open("datum.txt", "w") as fw:
+                fw.write(datum)
+        start = time.time()
+        nonces = []
+        while time.time() - start < 10:
+            if Path("submit.txt").exists():
+                with open("submit.txt", "r") as fr:
+                    for line in fr:
+                        nonces.append(line.rstrip("\n"))
+                    Path("submit.txt").unlink()
+        if len(nonces) == 0:
+            none_count += 1
+            if none_count > 6:
+                print("Restarting miner...")
+                process.kill()
+                process = subprocess.Popen(["./gpu_miner"])
+                none_count
+        else:
+            none_count = 0
+            print(f"Found {len(nonces)} nonces: {nonces}")
 
-    response = requests.get(
-        "https://piefayth.dev/pool/hashrate",
-        params={
-            "miner_id": miner_id,
-            "start_time": int((datetime.now() - timedelta(seconds=900)).timestamp()),
-        },
-    )
-    print(f"Hash rate (hourly average): {response.text}")
-    # if Path("submit.txt").exists():
-    #     print("found a solution!")
-    #     with open("submit.txt", "r") as fr:
-    #         nonce = fr.read()
-    #         response = requests.post(
-    #             "http://static.61.88.109.65.clients.your-server.de:8000/submit/",
-    #             data=nonce,
-    #             headers={"Content-Type": "text/plain"},
-    #         )
-    #         print(nonce)
+            response = requests.post(
+                "https://piefayth.dev/pool/submit",
+                headers={"Content-type": "application/json"},
+                data=json.dumps(
+                    {
+                        "address": "addr1q9zs05ya2wqv2ftzqgckcmfg0xq7s9cnp99eyj2dcqaxyx96h2p5jcgwnv4tw5tq3yzd2dmh3sgcgfyta3tv8x3vdq8qvuzr64",
+                        "entries": [{"nonce": nonce} for nonce in nonces],
+                    }
+                ),
+            )
+            print(
+                f"Successfully submitted {response.json()['num_accepted']} responses!"
+            )
 
-    #     Path("submit.txt").unlink()
+        response = requests.get(
+            "https://piefayth.dev/pool/hashrate",
+            params={
+                "miner_id": miner_id,
+                "start_time": int(
+                    (datetime.now() - timedelta(seconds=900)).timestamp()
+                ),
+            },
+        )
+        print(f"Hash rate (hourly average): {response.text}")
+        # if Path("submit.txt").exists():
+        #     print("found a solution!")
+        #     with open("submit.txt", "r") as fr:
+        #         nonce = fr.read()
+        #         response = requests.post(
+        #             "http://static.61.88.109.65.clients.your-server.de:8000/submit/",
+        #             data=nonce,
+        #             headers={"Content-Type": "text/plain"},
+        #         )
+        #         print(nonce)
+
+        #     Path("submit.txt").unlink()
+finally:
+    process.kill()

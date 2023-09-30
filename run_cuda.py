@@ -54,10 +54,10 @@ def get_datum():
 git_url = "https://raw.githubusercontent.com/theeldermillenial/nunet-cuda-tuna/master/"
 files = ["gpu_miner"]
 
-# for file in files:
-#     response = requests.get(git_url + file)
-#     with open(file, "wb") as fw:
-#         fw.write(response.content)
+for file in files:
+    response = requests.get(git_url + file)
+    with open(file, "wb") as fw:
+        fw.write(response.content)
 
 # path = Path("gpu.log")
 # fw = open(path, "w")
